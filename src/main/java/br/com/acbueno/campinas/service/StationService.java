@@ -1,8 +1,9 @@
 package br.com.acbueno.campinas.service;
 
-import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import br.com.acbueno.campinas.dto.StationRequestDTO;
 import br.com.acbueno.campinas.dto.StationResponseDTO;
@@ -19,11 +20,10 @@ public class StationService {
   @Autowired
   private ModelMapper modelMapper;
 
-  public List<StationResponseDTO> findAll() {
+  public Page<StationResponseDTO> findAll(Pageable pageable) {
     //@formatter:off
-    return stationRepository.findAll().stream()
-         .map(station -> modelMapper.map(station, StationResponseDTO.class))
-     .toList();
+    return stationRepository.findAll(pageable)
+        .map(station -> modelMapper.map(station, StationResponseDTO.class));
     //@formatter:on
   }
 

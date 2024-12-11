@@ -2,9 +2,10 @@ package br.com.acbueno.campinas.service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import br.com.acbueno.campinas.dto.RentalRequestDTO;
 import br.com.acbueno.campinas.dto.RentalResponseDTO;
@@ -83,7 +84,8 @@ public class RentalService {
     bike.setStation(station);
     bikeRepository.save(bike);
     rental.setReturnDate(LocalDateTime.now());
-    long minutes = Math.max(1, Duration.between(rental.getRentalDate(), rental.getReturnDate()).toMinutes());
+    long minutes =
+        Math.max(1, Duration.between(rental.getRentalDate(), rental.getReturnDate()).toMinutes());
     int timeRent = (int) Math.ceil(minutes / 60.0);
     rental.setRentalCost(timeRent * bike.getPricePerMinute());
     rental.setStatus(RentalStatus.COMPLETED);
@@ -93,11 +95,10 @@ public class RentalService {
 
   }
 
-  public List<RentalResponseDTO> getAllRent() {
+  public Page<RentalResponseDTO> getAllRent(Pageable pageable) {
     //@formatter:off
-    return rentalRepository.findAll().stream()
-        .map(rent -> modelMapper.map(rent, RentalResponseDTO.class))
-        .toList();
+    return rentalRepository.findAll(pageable)
+        .map(rental -> modelMapper.map(rental, RentalResponseDTO.class));
     //@formatter:on
   }
 
